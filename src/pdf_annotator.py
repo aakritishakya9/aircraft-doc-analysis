@@ -73,3 +73,21 @@ class VisualPDFAnnotator:
         doc.save(output_path)
         doc.close()
         return output_path
+
+    @staticmethod
+    def render_pdf_pages_as_images(pdf_path_or_bytes: Any, dpi: int = 140) -> List[bytes]:
+        """
+        Converts PDF pages into high-resolution PNG image bytes 
+        for direct, responsive in-browser rendering in Streamlit.
+        """
+        if isinstance(pdf_path_or_bytes, str):
+            doc = fitz.open(pdf_path_or_bytes)
+        else:
+            doc = fitz.open(stream=pdf_path_or_bytes, filetype="pdf")
+
+        images = []
+        for page in doc:
+            pix = page.get_pixmap(dpi=dpi)
+            images.append(pix.tobytes("png"))
+        doc.close()
+        return images
