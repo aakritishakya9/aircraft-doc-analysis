@@ -928,7 +928,7 @@ with tab_export:
 # =============================================================
 # FLOATING AI ASSISTANT (ANCHORED IN BOTTOM-RIGHT CORNER)
 # =============================================================
-with st.popover("✨ 🤖 AeroCopilot AI  ● Online", help="Launch Floating AeroCopilot AI Assistant", use_container_width=False):
+with st.popover("✨ 🤖 AeroCopilot AI  ● Online", help="Launch Floating AeroCopilot AI Assistant"):
     st.markdown("""
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
         <span style="font-size:17px; font-weight:800; color:#FFFFFF;">🤖 AeroCopilot Assistant</span>
