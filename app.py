@@ -26,7 +26,7 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Modern Aerospace Command Center CSS
+# High-Visibility Aerospace Command Center CSS (Dark & Light Mode Adaptive)
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
@@ -35,146 +35,170 @@ st.markdown("""
         font-family: 'Inter', sans-serif;
     }
     
-    /* Top Status Bar */
+    /* Top Live Telemetry Status Bar */
     .telemetry-bar {
-        background: linear-gradient(90deg, #0A192F 0%, #0F2A4A 100%);
-        border: 1px solid #1E3A8A;
+        background: linear-gradient(90deg, #0F172A 0%, #1E293B 100%);
+        border: 1px solid rgba(56, 189, 248, 0.3);
         border-radius: 8px;
-        padding: 8px 16px;
+        padding: 10px 18px;
         color: #E2E8F0;
         display: flex;
         justify-content: space-between;
         align-items: center;
         font-size: 13px;
         margin-bottom: 16px;
-        box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+        box-shadow: 0 4px 14px rgba(0,0,0,0.3);
     }
     .pulse-dot {
-        height: 9px;
-        width: 9px;
+        height: 10px;
+        width: 10px;
         background-color: #10B981;
         border-radius: 50%;
         display: inline-block;
-        margin-right: 6px;
-        box-shadow: 0 0 8px #10B981;
+        margin-right: 8px;
+        box-shadow: 0 0 10px #10B981;
     }
     .zulu-time {
         font-family: 'JetBrains Mono', monospace;
         color: #38BDF8;
         font-weight: 600;
+        letter-spacing: 0.5px;
     }
 
-    /* Titles */
+    /* Main Heading - High Visibility Gradient */
     .main-title {
-        font-size: 26px;
+        font-size: 28px;
         font-weight: 800;
-        color: #0A2540;
+        color: #FFFFFF !important;
+        background: linear-gradient(90deg, #FFFFFF 0%, #BAE6FD 50%, #38BDF8 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
         letter-spacing: -0.5px;
-        margin-bottom: 2px;
+        margin-bottom: 4px;
+        line-height: 1.25;
     }
     .sub-title {
         font-size: 14px;
-        color: #475569;
-        margin-bottom: 14px;
+        color: #94A3B8 !important;
+        font-weight: 500;
+        margin-bottom: 16px;
     }
 
-    /* Metric Cards */
+    /* KPI Metric Cards */
     .metric-card-custom {
-        background: #FFFFFF;
-        border: 1px solid #E2E8F0;
+        background: #1C2541 !important;
+        border: 1px solid rgba(148, 163, 184, 0.22) !important;
         border-radius: 10px;
         padding: 14px 18px;
-        box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05);
-        transition: transform 0.15s ease, box-shadow 0.15s ease;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+        transition: transform 0.15s ease, border-color 0.15s ease;
     }
     .metric-card-custom:hover {
         transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);
-        border-color: #CBD5E1;
+        border-color: #38BDF8 !important;
     }
     .metric-label-custom {
-        font-size: 12px;
-        font-weight: 600;
-        color: #64748B;
+        font-size: 11px;
+        font-weight: 700;
+        color: #94A3B8 !important;
         text-transform: uppercase;
-        letter-spacing: 0.5px;
-        margin-bottom: 4px;
+        letter-spacing: 0.8px;
+        margin-bottom: 6px;
     }
     .metric-value-custom {
-        font-size: 26px;
+        font-size: 28px;
         font-weight: 800;
-        color: #0F172A;
+        color: #F8FAFC !important;
     }
 
-    /* Badges */
+    /* Status Badges */
     .badge-critical {
-        background-color: #FEF2F2;
-        color: #DC2626;
-        padding: 4px 10px;
+        background-color: rgba(239, 68, 68, 0.2);
+        color: #F87171;
+        padding: 4px 12px;
         border-radius: 20px;
         font-weight: 700;
         font-size: 11px;
-        border: 1px solid #FECACA;
+        border: 1px solid rgba(239, 68, 68, 0.4);
         display: inline-block;
     }
     .badge-high {
-        background-color: #FFF7ED;
-        color: #EA580C;
-        padding: 4px 10px;
+        background-color: rgba(249, 115, 22, 0.2);
+        color: #FB923C;
+        padding: 4px 12px;
         border-radius: 20px;
         font-weight: 700;
         font-size: 11px;
-        border: 1px solid #FFEDD5;
+        border: 1px solid rgba(249, 115, 22, 0.4);
         display: inline-block;
     }
     .badge-med {
-        background-color: #FEFCE8;
-        color: #CA8A04;
-        padding: 4px 10px;
+        background-color: rgba(234, 179, 8, 0.2);
+        color: #FACC15;
+        padding: 4px 12px;
         border-radius: 20px;
         font-weight: 700;
         font-size: 11px;
-        border: 1px solid #FEF08A;
+        border: 1px solid rgba(234, 179, 8, 0.4);
         display: inline-block;
     }
     .badge-success {
-        background-color: #F0FDF4;
-        color: #16A34A;
-        padding: 4px 10px;
+        background-color: rgba(16, 185, 129, 0.2);
+        color: #4ADE80;
+        padding: 4px 12px;
         border-radius: 20px;
         font-weight: 700;
         font-size: 11px;
-        border: 1px solid #BBF7D0;
+        border: 1px solid rgba(16, 185, 129, 0.4);
         display: inline-block;
     }
 
     /* Content Cards */
     .aero-card {
-        background: #FFFFFF;
-        border: 1px solid #E2E8F0;
+        background: #1C2541 !important;
+        border: 1px solid rgba(148, 163, 184, 0.2) !important;
         border-radius: 10px;
         padding: 18px 20px;
         margin-bottom: 16px;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+        color: #E2E8F0 !important;
     }
     .aero-card-header {
         font-size: 16px;
         font-weight: 700;
-        color: #002B49;
+        color: #38BDF8 !important;
         margin-bottom: 12px;
         display: flex;
         align-items: center;
         gap: 8px;
     }
 
+    /* Tabs Styling */
+    .stTabs [data-baseweb="tab-list"] {
+        gap: 6px;
+        border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+    }
+    .stTabs [data-baseweb="tab"] {
+        background-color: transparent;
+        border-radius: 6px 6px 0 0;
+        color: #94A3B8;
+        font-weight: 600;
+        font-size: 13px;
+        padding: 8px 14px;
+    }
+    .stTabs [aria-selected="true"] {
+        color: #38BDF8 !important;
+        border-bottom: 2px solid #38BDF8 !important;
+        background-color: rgba(56, 189, 248, 0.08) !important;
+    }
+
     /* Visual Document Viewer Frames */
     .doc-page-container {
-        border: 2px solid #CBD5E1;
+        border: 2px solid rgba(56, 189, 248, 0.4);
         border-radius: 8px;
         overflow: hidden;
-        background: #F8FAFC;
+        background: #0B132B;
         padding: 8px;
-        box-shadow: inset 0 2px 4px rgba(0,0,0,0.04);
+        box-shadow: 0 4px 16px rgba(0,0,0,0.4);
     }
 </style>
 """, unsafe_allow_html=True)
@@ -188,18 +212,18 @@ st.markdown(f"""
 <div class="telemetry-bar">
     <div>
         <span class="pulse-dot"></span>
-        <b>SYSTEM STATUS:</b> ONLINE &nbsp;|&nbsp; 
-        <b>DATA FEED:</b> LIVE DATABASE SYNC &nbsp;|&nbsp; 
+        <b>SYSTEM STATUS:</b> <span style="color:#4ADE80;">ONLINE</span> &nbsp;|&nbsp; 
+        <b>DATA FEED:</b> <span style="color:#38BDF8;">LIVE DB SYNC</span> &nbsp;|&nbsp; 
         <b>TARGET FLEET:</b> AIRBUS A320neo / A321NX
     </div>
     <div class="zulu-time">🕒 {zulu_now}</div>
 </div>
 """, unsafe_allow_html=True)
 
-# Header Section
+# Header Section (High-Contrast Gradient Text)
 col_logo, col_heading = st.columns([1, 11])
 with col_logo:
-    st.markdown("# ✈️")
+    st.markdown("<div style='font-size: 42px; margin-top: -6px;'>✈️</div>", unsafe_allow_html=True)
 with col_heading:
     st.markdown('<div class="main-title">Aircraft Technical Documentation & Engineering Change Impact Analysis System</div>', unsafe_allow_html=True)
     st.markdown('<div class="sub-title">Live Automated PDF Extraction, Tolerance Shift Diffing, Component Configuration, and Human-in-the-Loop Sign-Off</div>', unsafe_allow_html=True)
@@ -309,9 +333,9 @@ with kpi4:
     """, unsafe_allow_html=True)
 with kpi5:
     st.markdown(f"""
-    <div class="metric-card-custom" style="border-left: 3px solid #EF4444;">
+    <div class="metric-card-custom" style="border-left: 3px solid #EF4444 !important;">
         <div class="metric-label-custom">⏳ Pending Reviews</div>
-        <div class="metric-value-custom" style="color:#DC2626;">{metrics['pending_reviews']} <span style="font-size:12px; color:#EF4444;">({metrics['critical_changes']} Critical)</span></div>
+        <div class="metric-value-custom" style="color:#F87171 !important;">{metrics['pending_reviews']} <span style="font-size:12px; color:#FB923C;">({metrics['critical_changes']} Critical)</span></div>
     </div>
     """, unsafe_allow_html=True)
 
@@ -433,32 +457,32 @@ with st.sidebar:
             st.rerun()
 
     st.markdown("---")
-    st.markdown("### ✈️ Active Monitored Component")
+    st.markdown("### ✈️ Monitored Component")
     active_rev = st.session_state.get("data_rev", {})
-    st.write(f"**Nomenclature:** {active_rev.get('component_name', 'N/A')}")
-    st.write(f"**Component ID:** `{active_rev.get('component_id', 'N/A')}`")
-    st.write(f"**ATA Chapter:** {active_rev.get('ata_chapter', 'N/A')}")
-    st.write(f"**Document Ref:** `{active_rev.get('doc_ref', 'N/A')}`")
+    st.markdown(f"**Nomenclature:** `{active_rev.get('component_name', 'N/A')}`")
+    st.markdown(f"**Component ID:** <span style='color:#38BDF8; font-weight:700;'>{active_rev.get('component_id', 'N/A')}</span>", unsafe_allow_html=True)
+    st.markdown(f"**ATA Chapter:** `{active_rev.get('ata_chapter', 'N/A')}`")
+    st.markdown(f"**Document Ref:** `{active_rev.get('doc_ref', 'N/A')}`")
 
 # -------------------------------------------------------------
-# MAIN COMMAND CENTER TABS
+# MAIN COMMAND CENTER TABS (Shortened & High-Contrast)
 # -------------------------------------------------------------
 tab_diff, tab_visual, tab_rationale, tab_interchange, tab_fleet, tab_graph, tab_regulatory, tab_export = st.tabs([
-    "📊 Parameter Shift Matrix",
-    "👁️ Side-by-Side Visual PDF",
-    "🧠 Engineering Rationale & Sign-Off",
-    "🔄 Part Interchangeability",
-    "✈️ Fleet MSN Effectivity",
-    "🕸️ Subsystem Ripple Graph",
-    "📡 Regulatory Feeds (FAA/EASA)",
-    "📥 Configuration & Excel Export"
+    "📊 Parameter Diff",
+    "👁️ Visual PDF",
+    "🧠 Review & Sign-Off",
+    "🔄 Interchangeability",
+    "✈️ Fleet Effectivity",
+    "🕸️ Ripple Graph",
+    "📡 AD Directives",
+    "📥 Export & DB"
 ])
 
 # -------------------------------------------------------------
 # TAB 1: PARAMETER SHIFT MATRIX
 # -------------------------------------------------------------
 with tab_diff:
-    st.subheader("1. Technical Document Specification Diff & Tolerance Analysis")
+    st.subheader("1. Specification Tolerance Shifts & Parameter Comparison")
     
     data_base = st.session_state["data_base"]
     data_rev = st.session_state["data_rev"]
@@ -504,7 +528,7 @@ with tab_diff:
 # TAB 2: SIDE-BY-SIDE VISUAL PDF VIEWER
 # -------------------------------------------------------------
 with tab_visual:
-    st.subheader("2. Side-by-Side Visual Document Inspection")
+    st.subheader("2. In-Browser Side-by-Side Visual Document Inspection")
     st.markdown("Direct visual rendering of the baseline PDF versus the revised PDF with **native PyMuPDF highlight bounding boxes**.")
 
     col_v1, col_v2 = st.columns(2)
@@ -513,7 +537,7 @@ with tab_visual:
         base_imgs = st.session_state.get("base_images", [])
         if base_imgs:
             st.markdown('<div class="doc-page-container">', unsafe_allow_html=True)
-            st.image(base_imgs[0], caption="Baseline Page 1 (Original)", use_container_width=True)
+            st.image(base_imgs[0], caption="Baseline Page 1 (Original OEM Specification)", use_container_width=True)
             st.markdown('</div>', unsafe_allow_html=True)
 
     with col_v2:
@@ -521,7 +545,7 @@ with tab_visual:
         rev_imgs = st.session_state.get("rev_annot_images", [])
         if rev_imgs:
             st.markdown('<div class="doc-page-container">', unsafe_allow_html=True)
-            st.image(rev_imgs[0], caption="Annotated Page 1 (PyMuPDF Dynamic Highlights)", use_container_width=True)
+            st.image(rev_imgs[0], caption="Annotated Page 1 (PyMuPDF Dynamic Coordinate Highlights)", use_container_width=True)
             st.markdown('</div>', unsafe_allow_html=True)
 
     annot_path = st.session_state.get("annotated_pdf_path", "")
@@ -531,7 +555,8 @@ with tab_visual:
                 label="📥 Download Full High-Res Annotated PDF (.pdf)",
                 data=f_pdf.read(),
                 file_name=os.path.basename(annot_path),
-                mime="application/pdf"
+                mime="application/pdf",
+                type="primary"
             )
 
 # -------------------------------------------------------------
@@ -546,7 +571,7 @@ with tab_rationale:
     if summary:
         # Executive Brief
         st.markdown("""
-        <div class="aero-card" style="border-left: 4px solid #002B49;">
+        <div class="aero-card" style="border-left: 4px solid #38BDF8 !important;">
             <div class="aero-card-header">📋 Executive Engineering Rationale</div>
         """, unsafe_allow_html=True)
         for pt in summary.get("executive_brief", []):
@@ -555,8 +580,8 @@ with tab_rationale:
 
         # Shop-Floor Actions
         st.markdown("""
-        <div class="aero-card" style="border-left: 4px solid #0284C7;">
-            <div class="aero-card-header">🛠️ Shop-Floor & Line Technician Action Directives</div>
+        <div class="aero-card" style="border-left: 4px solid #F59E0B !important;">
+            <div class="aero-card-header" style="color:#FBBF24 !important;">🛠️ Shop-Floor & Line Technician Action Directives</div>
         """, unsafe_allow_html=True)
         for act in summary.get("shop_floor_actions", []):
             st.markdown(f"• **ACTION ITEM**: {act}", unsafe_allow_html=True)
@@ -565,9 +590,9 @@ with tab_rationale:
         # Airworthiness statement
         reg_level = summary.get('regulatory_level', 'STANDARD REVISION')
         st.markdown(f"""
-        <div class="aero-card" style="border-left: 4px solid #DC2626;">
-            <div class="aero-card-header" style="color:#DC2626;">⚖️ Airworthiness Regulatory Assessment: {reg_level}</div>
-            <p style="color:#334155; margin-bottom:0;">{summary.get('regulatory_compliance_notes', '')}</p>
+        <div class="aero-card" style="border-left: 4px solid #EF4444 !important;">
+            <div class="aero-card-header" style="color:#F87171 !important;">⚖️ Airworthiness Regulatory Assessment: {reg_level}</div>
+            <p style="color:#CBD5E1; margin-bottom:0;">{summary.get('regulatory_compliance_notes', '')}</p>
         </div>
         """, unsafe_allow_html=True)
 
@@ -615,16 +640,16 @@ with tab_interchange:
             st.metric("New Superseding Part Number (P/N)", ic_data["updated_part_number"], delta=ic_data["interchangeability_class"])
 
         is_one_way = "Class 2" in ic_data["interchangeability_class"]
-        banner_bg = "#FEF2F2" if is_one_way else "#F0FDF4"
-        border_col = "#EF4444" if is_one_way else "#22C55E"
-        header_col = "#991B1B" if is_one_way else "#166534"
+        banner_bg = "rgba(239, 68, 68, 0.15)" if is_one_way else "rgba(16, 185, 129, 0.15)"
+        border_col = "#EF4444" if is_one_way else "#10B981"
+        header_col = "#F87171" if is_one_way else "#4ADE80"
 
         st.markdown(f"""
         <div style="background:{banner_bg}; border-left:5px solid {border_col}; padding:18px; border-radius:8px; margin: 15px 0;">
             <h4 style="color:{header_col}; margin-top:0;">{ic_data['interchangeability_class']}</h4>
-            <p style="margin-bottom:8px;"><b>Engineering Definition:</b> {ic_data['engineering_definition']}</p>
-            <p style="margin-bottom:8px;"><b>Supply Chain & Warehouse Action:</b> {ic_data['supply_chain_action']}</p>
-            <p style="margin-bottom:0;"><b>Airworthiness Risk Assessment:</b> {ic_data['airworthiness_risk_level']}</p>
+            <p style="margin-bottom:8px; color:#E2E8F0;"><b>Engineering Definition:</b> {ic_data['engineering_definition']}</p>
+            <p style="margin-bottom:8px; color:#E2E8F0;"><b>Supply Chain & Warehouse Action:</b> {ic_data['supply_chain_action']}</p>
+            <p style="margin-bottom:0; color:#E2E8F0;"><b>Airworthiness Risk Assessment:</b> {ic_data['airworthiness_risk_level']}</p>
         </div>
         """, unsafe_allow_html=True)
 
