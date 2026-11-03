@@ -10,7 +10,8 @@ ENV/
 # SQLite databases & temp files
 *.db
 *.sqlite
-data/export/*.xlsx
+data/export/*
+!data/export/.gitkeep
 
 # Streamlit config & runtime logs
 .streamlit/

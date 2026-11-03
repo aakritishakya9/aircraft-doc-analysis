@@ -72,6 +72,32 @@ class DatabaseManager:
             )
             """)
 
+            # Fleet Aircraft table
+            cursor.execute("""
+            CREATE TABLE IF NOT EXISTS fleet_aircraft (
+                tail_number TEXT PRIMARY KEY,
+                msn INTEGER NOT NULL,
+                aircraft_model TEXT NOT NULL,
+                engine_type TEXT NOT NULL,
+                total_hours INTEGER NOT NULL,
+                total_cycles INTEGER NOT NULL,
+                base_hub TEXT NOT NULL
+            )
+            """)
+
+            # Part Interchangeability table
+            cursor.execute("""
+            CREATE TABLE IF NOT EXISTS part_interchangeability (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                component_id TEXT NOT NULL,
+                previous_pn TEXT,
+                updated_pn TEXT,
+                interchangeability_class TEXT NOT NULL,
+                action_required TEXT,
+                timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+            """)
+
             # Seed default fleet components if table is empty
             cursor.execute("SELECT COUNT(*) FROM components")
             if cursor.fetchone()[0] == 0:

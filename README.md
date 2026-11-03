@@ -21,13 +21,20 @@ When an OEM (e.g., Airbus or Boeing) releases a revision for an aircraft compone
 
 ---
 
-## 🚀 Key Features
+## 🚀 Key Features & Enterprise Modules
 
 * **Feature 1: PyMuPDF Extraction Engine**: Coordinate-aware and regex-assisted parsing of PDF headers, Document Reference IDs, Revision numbers, Publication dates, ATA chapters, Component metadata, and structured specification tables.
 * **Feature 2: High-Precision Document Comparison**: Text sequence matching coupled with numerical parameter shift detection (`PSI`, `bar`, `in-lbs`, `ft-lbs`, `°C`, `Flight Hours`, and `P/N`), calculating signed delta shifts ($\Delta$).
-* **Feature 3: Engineering Change Impact Analyzer**: Automatically classifies change severity (`HIGH`, `MEDIUM`, `LOW`), maps affected downstream manuals (AMM tasks, GSE test rig specs, IPC, Job Instruction Cards), and prepares items for engineering sign-off.
-* **Feature 4: Component Configuration Tracking**: SQLite-backed relational tracking of aircraft components, active revisions, and regulatory statuses (`Updated`, `Under Review`, `Compliant`).
-* **Feature 5: Interactive Streamlit Dashboard**: Clean, aviation-themed UI featuring executive KPI ribbons, side-by-side synchronized diffs, interactive engineer review forms, and one-click multi-tab Excel report generation (`openpyxl`).
+* **Feature 3: Visual PDF Annotator (Highlight Bounding Boxes)**: PyMuPDF dynamically scans and draws native color-coded highlight boxes directly onto the PDF document pages (green for additions, amber for modifications, red for baselines) for side-by-side visual inspection.
+* **Feature 4: OEM Part Interchangeability Engine**: Automatically evaluates part supersession rules:
+  * **Class 1 (Two-Way)**: Fully interchangeable in both directions (normal stock attrition).
+  * **Class 2 (One-Way)**: New P/N can replace Old P/N, but Old P/N CANNOT replace New P/N. Quarantines old warehouse stock to prevent component overpressure.
+  * **Class 3 (Non-Interchangeable)**: Requires structural or electrical modification.
+* **Feature 5: Airline Fleet MSN & Tail Number Effectivity**: Matches document applicability against airline fleet rosters (MSN, aircraft models, flight hours, cycles) to determine which specific tail numbers are affected vs exempt.
+* **Feature 6: Multi-System Ripple Effect (Knowledge Graph)**: Uses topological directed graphs (NetworkX) to visualize how upstream power changes (e.g., ATA 29 Hydraulic pump pressure) ripple into downstream consumers (Landing Gear, Brakes, Flap/Slat control units, Cargo doors).
+* **Feature 7: AI Semantic Engineering Rationale & Directives**: Synthesizes engineering justifications, shop-floor technician directives (tooling/relief valve calibration), and FAA 14 CFR Part 43 / EASA Part 145 regulatory statements.
+* **Feature 8: Live Regulatory Feed (FAA & EASA ADs)**: Ingests and cross-references Airworthiness Directives with active fleet components.
+* **Feature 9: Interactive Streamlit Dashboard & Excel Reporting**: Complete multi-tab engineering portal with human-in-the-loop review sign-offs and styled multi-sheet Excel reports (`openpyxl`).
 
 ---
 

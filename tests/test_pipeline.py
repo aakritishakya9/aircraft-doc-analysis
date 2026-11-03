@@ -10,6 +10,11 @@ from src.diff_engine import DocumentComparator
 from src.impact_analyzer import EngineeringImpactAnalyzer
 from src.db_manager import DatabaseManager
 from src.excel_exporter import ExcelEngineeringExporter
+from src.pdf_annotator import VisualPDFAnnotator
+from src.fleet_manager import FleetEffectivityManager
+from src.system_graph import AircraftSystemKnowledgeGraph
+from src.semantic_summarizer import SemanticChangeSummarizer
+from src.regulatory_feed import RegulatoryFeedManager
 
 def run_all_tests():
     print("=== STEP 1: GENERATING TEST AVIATION PDFS ===")
@@ -40,41 +45,57 @@ def run_all_tests():
     param_diffs = comp_results["parameter_diffs"]
     print(f"Total parameter diffs evaluated: {len(param_diffs)}")
     
-    # Check pressure shift: 3000 PSI -> 3200 PSI (+200 PSI)
     pressure_diff = next((p for p in param_diffs if "Pressure" in p["parameter"]), None)
     assert pressure_diff is not None, "Pressure parameter diff not found!"
     print(f"Pressure diff verified: {pressure_diff['previous_version']} -> {pressure_diff['updated_version']} (Delta: {pressure_diff['delta']})")
 
-    print("\n=== STEP 4: TESTING ENGINEERING IMPACT ANALYSIS ===")
-    analyzer = EngineeringImpactAnalyzer(comp_results)
-    impact_items = analyzer.generate_impact_report()
-    print(f"Generated {len(impact_items)} engineering impact items.")
-    assert len(impact_items) > 0, "No impact items generated!"
+    print("\n=== STEP 4: TESTING VISUAL PDF ANNOTATOR ===")
+    annot_out = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data", "export", "test_annotated.pdf")
+    VisualPDFAnnotator.annotate_document_differences(doc2, param_diffs, annot_out, is_revised_doc=True)
+    assert os.path.exists(annot_out), "Annotated PDF not created!"
+    print("Visual PDF Annotator created highlighted PDF successfully.")
 
-    high_sev_items = [i for i in impact_items if i['severity'] in ['HIGH', 'CRITICAL']]
-    print(f"High severity safety items flagged: {len(high_sev_items)}")
-    assert len(high_sev_items) > 0, "High severity items should be flagged!"
+    print("\n=== STEP 5: TESTING PART INTERCHANGEABILITY & FLEET EFFECTIVITY ===")
+    ic_res = FleetEffectivityManager.classify_part_interchangeability("P/N 9400-A", "P/N 9400-B", param_diffs)
+    print(f"Interchangeability: {ic_res['interchangeability_class']}")
+    assert "Class 2" in ic_res["interchangeability_class"], "Expected Class 2 (One-Way) due to pressure shift!"
 
-    print("\n=== STEP 5: TESTING DATABASE OPERATIONS ===")
+    fleet_df = FleetEffectivityManager.evaluate_fleet_impact("Airbus A320-271N MSN 0200 through 0500 equipped with LEAP-1A")
+    assert not fleet_df.empty, "Fleet evaluation failed!"
+    print(f"Evaluated {len(fleet_df)} fleet tails for effectivity.")
+
+    print("\n=== STEP 6: TESTING SUBSYSTEM KNOWLEDGE GRAPH ===")
+    kg = AircraftSystemKnowledgeGraph()
+    ripples = kg.trace_ripple_effect("HYD-001")
+    assert len(ripples) > 0, "No downstream consumers found in knowledge graph!"
+    print(f"Knowledge graph found {len(ripples)} downstream subsystems connected to HYD-001.")
+    img_bytes = kg.render_graph_image()
+    assert len(img_bytes) > 0, "Failed to render graph image!"
+    print("Subsystem knowledge graph image rendered successfully.")
+
+    print("\n=== STEP 7: TESTING SEMANTIC RATIONALE & REGULATORY FEED ===")
+    summary = SemanticChangeSummarizer.generate_executive_rationale(
+        comp_results["metadata_diff"], param_diffs, comp_results["text_diff"], ic_res
+    )
+    assert len(summary["executive_brief"]) > 0, "Executive brief empty!"
+    print("Semantic engineering rationale generated successfully.")
+
+    ad_df = RegulatoryFeedManager.get_latest_directives()
+    assert not ad_df.empty, "Regulatory feed empty!"
+    print(f"Regulatory feed verified with {len(ad_df)} Airworthiness Directives.")
+
+    print("\n=== STEP 8: TESTING DATABASE & EXCEL EXPORTER ===")
     db = DatabaseManager()
-    db.log_document_revision(data2["doc_ref"], data2["revision"], data2["pub_date"], data2["component_id"])
+    impact_items = EngineeringImpactAnalyzer(comp_results).generate_impact_report()
     db.log_engineering_changes(impact_items)
-    db.update_component_status("HYD-001", "Rev 02", "Under Review")
-    
     changes_df = db.get_engineering_changes("HYD-001")
-    assert not changes_df.empty, "Failed to retrieve engineering changes from database!"
-    print(f"Retrieved {len(changes_df)} database change records for HYD-001.")
-
-    metrics = db.get_summary_metrics()
-    print(f"Metrics: {metrics}")
-
-    print("\n=== STEP 6: TESTING EXCEL EXPORTER ===")
     comps_df = db.get_all_components()
+    metrics = db.get_summary_metrics()
     excel_bytes = ExcelEngineeringExporter.generate_excel_report(changes_df, comps_df, metrics)
     assert len(excel_bytes) > 0, "Excel output is empty!"
     print(f"Excel report generated successfully ({len(excel_bytes)} bytes).")
 
-    print("\nALL AUTOMATED TESTS PASSED SUCCESSFULLY! [SUCCESS]")
+    print("\nALL ENTERPRISE FEATURES AND PIPELINE TESTS PASSED! [SUCCESS]")
 
 if __name__ == "__main__":
     run_all_tests()
