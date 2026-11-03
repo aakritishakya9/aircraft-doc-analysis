@@ -226,44 +226,117 @@ st.markdown("""
     }
 
     /* ========================================================
-       FLOATING AI COPILOT BUTTON & POPOVER (BOTTOM-RIGHT)
+       FLOATING AI COPILOT BUTTON & POPOVER (HIGH-CONTRAST NEON GLOW)
        ======================================================== */
-    div[data-testid="stPopover"] {
+    /* Detach container from layout and fix strictly in bottom-right corner */
+    div.stElementContainer:has([data-testid="stPopover"]),
+    div[data-testid="stPopover"],
+    .stPopover {
         position: fixed !important;
-        bottom: 28px !important;
-        right: 28px !important;
-        z-index: 999999 !important;
+        bottom: 26px !important;
+        right: 26px !important;
+        left: auto !important;
+        top: auto !important;
+        width: auto !important;
+        max-width: fit-content !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        z-index: 99999999 !important;
+        display: block !important;
     }
 
-    div[data-testid="stPopover"] > button {
-        background: linear-gradient(135deg, #0284C7 0%, #0369A1 100%) !important;
+    /* Style the Floating Popover Trigger Button */
+    div[data-testid="stPopover"] button,
+    div.stElementContainer:has([data-testid="stPopover"]) button,
+    [data-testid="stPopoverButton"],
+    button[data-testid="stPopoverButton"],
+    .stPopover > div > div > button,
+    .stPopover button {
+        background: linear-gradient(135deg, #0284C7 0%, #0369A1 45%, #0EA5E9 100%) !important;
+        background-color: #0284C7 !important;
         color: #FFFFFF !important;
         border: 2px solid #38BDF8 !important;
         border-radius: 50px !important;
-        padding: 12px 24px !important;
+        padding: 13px 26px !important;
         font-size: 15px !important;
-        font-weight: 700 !important;
-        letter-spacing: 0.3px !important;
-        box-shadow: 0 8px 30px rgba(2, 132, 199, 0.6), 0 0 15px rgba(56, 189, 248, 0.4) !important;
+        font-weight: 800 !important;
+        box-shadow: 0 0 25px rgba(56, 189, 248, 0.9), 0 8px 30px rgba(0, 0, 0, 0.85) !important;
         cursor: pointer !important;
-        transition: all 0.25s ease !important;
+        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        animation: pulse-aerocopilot 2.4s infinite alternate !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        gap: 10px !important;
+        outline: none !important;
+        white-space: nowrap !important;
     }
 
-    div[data-testid="stPopover"] > button:hover {
-        transform: translateY(-4px) scale(1.04) !important;
-        box-shadow: 0 12px 35px rgba(2, 132, 199, 0.8), 0 0 25px rgba(56, 189, 248, 0.6) !important;
-        border-color: #7DD3FC !important;
+    /* Hover effect */
+    div[data-testid="stPopover"] button:hover,
+    [data-testid="stPopoverButton"]:hover,
+    button[data-testid="stPopoverButton"]:hover,
+    .stPopover button:hover {
+        transform: translateY(-4px) scale(1.06) !important;
+        background: linear-gradient(135deg, #0369A1 0%, #0284C7 50%, #38BDF8 100%) !important;
+        box-shadow: 0 0 45px rgba(56, 189, 248, 1.0), 0 12px 38px rgba(0, 0, 0, 0.95) !important;
+        border-color: #FFFFFF !important;
     }
 
+    /* Ensure text inside button is pure white and bold */
+    div[data-testid="stPopover"] button *,
+    [data-testid="stPopoverButton"] *,
+    button[data-testid="stPopoverButton"] *,
+    div[data-testid="stPopover"] button p,
+    div[data-testid="stPopover"] button span,
+    div[data-testid="stPopover"] button div,
+    .stPopover button * {
+        color: #FFFFFF !important;
+        font-size: 14.5px !important;
+        font-weight: 800 !important;
+        letter-spacing: 0.5px !important;
+        text-shadow: 0 2px 6px rgba(0, 0, 0, 0.9) !important;
+    }
+
+    /* Chevron / SVG icon */
+    div[data-testid="stPopover"] button svg,
+    [data-testid="stPopoverButton"] svg,
+    .stPopover button svg {
+        fill: #FFFFFF !important;
+        color: #FFFFFF !important;
+        stroke: #FFFFFF !important;
+        filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.9));
+        width: 18px !important;
+        height: 18px !important;
+    }
+
+    /* Pulsating neon electric cyan glow animation */
+    @keyframes pulse-aerocopilot {
+        0% {
+            box-shadow: 0 0 16px rgba(56, 189, 248, 0.7), 0 6px 20px rgba(0, 0, 0, 0.8);
+            border-color: #38BDF8;
+        }
+        50% {
+            box-shadow: 0 0 35px rgba(56, 189, 248, 1.0), 0 8px 30px rgba(14, 165, 233, 0.6);
+            border-color: #BAE6FD;
+        }
+        100% {
+            box-shadow: 0 0 16px rgba(56, 189, 248, 0.7), 0 6px 20px rgba(0, 0, 0, 0.8);
+            border-color: #38BDF8;
+        }
+    }
+
+    /* Floating Popover Modal Window */
     div[data-testid="stPopoverBody"] {
-        width: 480px !important;
-        max-width: 90vw !important;
+        width: 520px !important;
+        max-width: 92vw !important;
         max-height: 82vh !important;
-        background: #162238 !important;
-        border: 1px solid rgba(56, 189, 248, 0.4) !important;
+        background: #0B132B !important;
+        background-color: #0B132B !important;
+        border: 2px solid #38BDF8 !important;
         border-radius: 16px !important;
-        padding: 20px !important;
-        box-shadow: 0 24px 60px rgba(0, 0, 0, 0.8), 0 0 30px rgba(56, 189, 248, 0.2) !important;
+        padding: 22px !important;
+        box-shadow: 0 25px 60px rgba(0, 0, 0, 0.95), 0 0 40px rgba(56, 189, 248, 0.4) !important;
         overflow-y: auto !important;
     }
 </style>
@@ -373,7 +446,7 @@ st.markdown("""
     <div class="hero-badge-group">
         <span class="hero-pill">⚡ 95% Review Cycle Time Reduction</span>
         <span class="hero-pill">🛡️ FAA 14 CFR Part 43 / EASA 145 Compliant</span>
-        <span class="hero-pill">🤖 Floating AeroCopilot RAG Assistant</span>
+        <span class="hero-pill" style="border-color:#38BDF8; background:rgba(2,132,199,0.25); color:#BAE6FD;">✨ 🤖 AeroCopilot AI (Floating Bottom-Right ↘)</span>
         <span class="hero-pill">🔌 Enterprise MRO Sync (AMOS / SAP / Maximo)</span>
         <span class="hero-pill">📷 Scanned Legacy OCR Pipeline</span>
     </div>
@@ -855,7 +928,7 @@ with tab_export:
 # =============================================================
 # FLOATING AI ASSISTANT (ANCHORED IN BOTTOM-RIGHT CORNER)
 # =============================================================
-with st.popover("🤖 AeroCopilot AI", help="Click to open Floating AI Assistant"):
+with st.popover("✨ 🤖 AeroCopilot AI  ● Online", help="Launch Floating AeroCopilot AI Assistant", use_container_width=False):
     st.markdown("""
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
         <span style="font-size:17px; font-weight:800; color:#FFFFFF;">🤖 AeroCopilot Assistant</span>
@@ -869,19 +942,22 @@ with st.popover("🤖 AeroCopilot AI", help="Click to open Floating AI Assistant
     # Quick Prompt Chips
     st.markdown("<p style='font-size:11px; font-weight:700; color:#38BDF8; text-transform:uppercase; margin-bottom:6px;'>Quick Inquiry Chips</p>", unsafe_allow_html=True)
     c1, c2 = st.columns(2)
-    q_chip = None
+    chip_clicked = None
     if c1.button("Rated Pressure?", key="pop_p", use_container_width=True):
-        q_chip = "What is the rated operating delivery pressure?"
+        chip_clicked = "What is the rated operating delivery pressure?"
     if c2.button("Drive Flange Torque?", key="pop_t", use_container_width=True):
-        q_chip = "What is the drive flange bolt torque specification?"
+        chip_clicked = "What is the drive flange bolt torque specification?"
         
     c3, c4 = st.columns(2)
     if c3.button("GSE Ground Tooling?", key="pop_g", use_container_width=True):
-        q_chip = "What ground support equipment is required for system checkout?"
+        chip_clicked = "What ground support equipment is required for system checkout?"
     if c4.button("Affected MSNs?", key="pop_m", use_container_width=True):
-        q_chip = "Which aircraft MSNs are affected by this technical publication?"
+        chip_clicked = "Which aircraft MSNs are affected by this technical publication?"
 
-    user_query = st.text_input("Ask a question about this manual:", value=q_chip or "", placeholder="e.g. What is the case drain temperature limit?", key="copilot_pop_input")
+    default_val = chip_clicked or st.session_state.get("last_copilot_q", "")
+    user_query = st.text_input("Ask a question about this manual:", value=default_val, placeholder="e.g. What is the case drain temperature limit?", key="copilot_pop_input")
+    if chip_clicked:
+        st.session_state["last_copilot_q"] = chip_clicked
 
     if user_query:
         with st.spinner("Analyzing manual vectors..."):
