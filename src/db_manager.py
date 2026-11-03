@@ -17,10 +17,16 @@ class DatabaseManager:
         else:
             self.db_path = db_path
             
-        os.makedirs(os.path.dirname(self.db_path), exist_ok=True)
+        if self.db_path != ":memory:" and os.path.dirname(self.db_path):
+            os.makedirs(os.path.dirname(self.db_path), exist_ok=True)
         self._init_db()
 
     def _get_connection(self):
+        if self.db_path == ":memory:":
+            if not hasattr(self, "_memory_conn") or self._memory_conn is None:
+                self._memory_conn = sqlite3.connect(":memory:")
+                self._memory_conn.row_factory = sqlite3.Row
+            return self._memory_conn
         conn = sqlite3.connect(self.db_path)
         conn.row_factory = sqlite3.Row
         return conn
@@ -95,6 +101,19 @@ class DatabaseManager:
                 interchangeability_class TEXT NOT NULL,
                 action_required TEXT,
                 timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+            """)
+
+            # ERP Outbox table for MRO synchronization (AMOS / SAP / Maximo)
+            cursor.execute("""
+            CREATE TABLE IF NOT EXISTS erp_outbox (
+                dispatch_id INTEGER PRIMARY KEY AUTOINCREMENT,
+                eco_number TEXT NOT NULL,
+                target_erp TEXT NOT NULL,
+                sync_status TEXT NOT NULL,
+                transaction_id TEXT,
+                payload_json TEXT,
+                dispatched_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
             """)
 
@@ -204,3 +223,16 @@ class DatabaseManager:
                 "pending_reviews": pending_reviews,
                 "critical_changes": critical_changes
             }
+
+    def log_erp_dispatch(self, eco_number: str, target_erp: str, status: str, transaction_id: str, payload_json: str):
+        with self._get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute("""
+            INSERT INTO erp_outbox (eco_number, target_erp, sync_status, transaction_id, payload_json)
+            VALUES (?, ?, ?, ?, ?)
+            """, (eco_number, target_erp, status, transaction_id, payload_json))
+            conn.commit()
+
+    def get_erp_dispatches(self) -> pd.DataFrame:
+        with self._get_connection() as conn:
+            return pd.read_sql_query("SELECT * FROM erp_outbox ORDER BY dispatch_id DESC", conn)

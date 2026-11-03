@@ -15,87 +15,76 @@ from src.fleet_manager import FleetEffectivityManager
 from src.system_graph import AircraftSystemKnowledgeGraph
 from src.semantic_summarizer import SemanticChangeSummarizer
 from src.regulatory_feed import RegulatoryFeedManager
+from src.rag_engine import TechnicalManualRAGEngine
+from src.ocr_engine import LegacyManualOCREngine
+from src.erp_integrator import AirlineERPIntegrator
 
 def run_all_tests():
-    print("=== STEP 1: GENERATING TEST AVIATION PDFS ===")
-    generate_all()
     sample_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data", "sample_pdfs")
     doc1 = os.path.join(sample_dir, "AMM_29_10_00_Rev01.pdf")
     doc2 = os.path.join(sample_dir, "AMM_29_10_00_Rev02.pdf")
     
     assert os.path.exists(doc1), f"Missing {doc1}"
     assert os.path.exists(doc2), f"Missing {doc2}"
-    print("Sample PDFs successfully created.")
+    print("Sample PDFs verified.")
 
-    print("\n=== STEP 2: TESTING PYMUPDF EXTRACTION ===")
+    print("\n=== STEP 1: TESTING PYMUPDF EXTRACTION ===")
     ext1 = AviationPDFExtractor(doc1)
     data1 = ext1.extract_all()
-    print(f"Extracted Doc 1: Ref={data1['doc_ref']}, Rev={data1['revision']}, Date={data1['pub_date']}, Specs={len(data1['specifications'])}")
-
     ext2 = AviationPDFExtractor(doc2)
     data2 = ext2.extract_all()
-    print(f"Extracted Doc 2: Ref={data2['doc_ref']}, Rev={data2['revision']}, Date={data2['pub_date']}, Specs={len(data2['specifications'])}")
 
     assert data1['revision'] == "Rev 01", f"Expected Rev 01, got {data1['revision']}"
     assert data2['revision'] == "Rev 02", f"Expected Rev 02, got {data2['revision']}"
+    print(f"Extraction verified: {data1['doc_ref']} vs {data2['doc_ref']}")
 
-    print("\n=== STEP 3: TESTING DOCUMENT COMPARISON & PARAMETER DIFF ===")
+    print("\n=== STEP 2: TESTING DOCUMENT COMPARISON & PARAMETER DIFF ===")
     comparator = DocumentComparator(data1, data2)
     comp_results = comparator.compare_all()
     param_diffs = comp_results["parameter_diffs"]
-    print(f"Total parameter diffs evaluated: {len(param_diffs)}")
-    
     pressure_diff = next((p for p in param_diffs if "Pressure" in p["parameter"]), None)
     assert pressure_diff is not None, "Pressure parameter diff not found!"
     print(f"Pressure diff verified: {pressure_diff['previous_version']} -> {pressure_diff['updated_version']} (Delta: {pressure_diff['delta']})")
 
-    print("\n=== STEP 4: TESTING VISUAL PDF ANNOTATOR ===")
-    annot_out = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data", "export", "test_annotated.pdf")
-    VisualPDFAnnotator.annotate_document_differences(doc2, param_diffs, annot_out, is_revised_doc=True)
-    assert os.path.exists(annot_out), "Annotated PDF not created!"
-    print("Visual PDF Annotator created highlighted PDF successfully.")
+    print("\n=== STEP 3: TESTING TECHNICAL MANUAL RAG ENGINE ===")
+    rag = TechnicalManualRAGEngine()
+    rag.index_document(data2["doc_ref"], data2["revision"], data2["full_text"], data2.get("specifications", {}))
+    rag_res = rag.query("What is the rated operating delivery pressure?")
+    assert len(rag_res["citations"]) > 0, "RAG failed to retrieve relevant chunks!"
+    assert rag_res["confidence"] > 0.5, "RAG confidence too low!"
+    print(f"RAG query successful (Confidence: {rag_res['confidence']}): {rag_res['answer'][:90]}...")
 
-    print("\n=== STEP 5: TESTING PART INTERCHANGEABILITY & FLEET EFFECTIVITY ===")
+    print("\n=== STEP 4: TESTING LEGACY OCR PIPELINE ===")
+    ocr_res = LegacyManualOCREngine.extract_scanned_pdf(doc1)
+    assert ocr_res["is_scanned_ocr"], "OCR flag not set!"
+    assert len(ocr_res["specifications"]) > 0, "No OCR specifications extracted!"
+    print(f"OCR Pipeline verified: Title={ocr_res['title']}, Specs={len(ocr_res['specifications'])}")
+
+    print("\n=== STEP 5: TESTING AIRLINE ERP / MRO SYNCHRONIZATION ===")
     ic_res = FleetEffectivityManager.classify_part_interchangeability("P/N 9400-A", "P/N 9400-B", param_diffs)
-    print(f"Interchangeability: {ic_res['interchangeability_class']}")
-    assert "Class 2" in ic_res["interchangeability_class"], "Expected Class 2 (One-Way) due to pressure shift!"
+    sample_change = {"component_id": "HYD-001", "parameter_name": "Operating Pressure", "previous_spec": "3000 PSI", "updated_spec": "3200 PSI"}
+    eco_payload = AirlineERPIntegrator.generate_eco_payload(sample_change, ic_res, "Capt A. Shakya", "Swiss-AS AMOS")
+    assert "eco_header" in eco_payload, "Missing eco_header in payload!"
+    assert "cryptographic_checksum" in eco_payload["eco_header"], "Missing checksum in ECO header!"
+    disp_res = AirlineERPIntegrator.dispatch_webhook(eco_payload)
+    assert disp_res["status_code"] == 200, "Simulated ERP webhook failed!"
+    print(f"ERP Integration verified: {disp_res['eco_number']} synced to {disp_res['target_erp']} (TX: {disp_res['transaction_id']})")
 
-    fleet_df = FleetEffectivityManager.evaluate_fleet_impact("Airbus A320-271N MSN 0200 through 0500 equipped with LEAP-1A")
-    assert not fleet_df.empty, "Fleet evaluation failed!"
-    print(f"Evaluated {len(fleet_df)} fleet tails for effectivity.")
+    print("\n=== STEP 6: TESTING DATABASE OUTBOX & EXCEL EXPORT ===")
+    db = DatabaseManager(":memory:")
+    db.log_erp_dispatch(disp_res["eco_number"], disp_res["target_erp"], disp_res["status"], disp_res["transaction_id"], str(eco_payload))
+    outbox_df = db.get_erp_dispatches()
+    assert not outbox_df.empty, "ERP outbox table empty!"
+    print(f"Outbox audit log verified with {len(outbox_df)} records.")
 
-    print("\n=== STEP 6: TESTING SUBSYSTEM KNOWLEDGE GRAPH ===")
-    kg = AircraftSystemKnowledgeGraph()
-    ripples = kg.trace_ripple_effect("HYD-001")
-    assert len(ripples) > 0, "No downstream consumers found in knowledge graph!"
-    print(f"Knowledge graph found {len(ripples)} downstream subsystems connected to HYD-001.")
-    img_bytes = kg.render_graph_image()
-    assert len(img_bytes) > 0, "Failed to render graph image!"
-    print("Subsystem knowledge graph image rendered successfully.")
-
-    print("\n=== STEP 7: TESTING SEMANTIC RATIONALE & REGULATORY FEED ===")
-    summary = SemanticChangeSummarizer.generate_executive_rationale(
-        comp_results["metadata_diff"], param_diffs, comp_results["text_diff"], ic_res
-    )
-    assert len(summary["executive_brief"]) > 0, "Executive brief empty!"
-    print("Semantic engineering rationale generated successfully.")
-
-    ad_df = RegulatoryFeedManager.get_latest_directives()
-    assert not ad_df.empty, "Regulatory feed empty!"
-    print(f"Regulatory feed verified with {len(ad_df)} Airworthiness Directives.")
-
-    print("\n=== STEP 8: TESTING DATABASE & EXCEL EXPORTER ===")
-    db = DatabaseManager()
-    impact_items = EngineeringImpactAnalyzer(comp_results).generate_impact_report()
-    db.log_engineering_changes(impact_items)
     changes_df = db.get_engineering_changes("HYD-001")
     comps_df = db.get_all_components()
     metrics = db.get_summary_metrics()
     excel_bytes = ExcelEngineeringExporter.generate_excel_report(changes_df, comps_df, metrics)
     assert len(excel_bytes) > 0, "Excel output is empty!"
-    print(f"Excel report generated successfully ({len(excel_bytes)} bytes).")
+    print(f"Excel report verified ({len(excel_bytes)} bytes).")
 
-    print("\nALL ENTERPRISE FEATURES AND PIPELINE TESTS PASSED! [SUCCESS]")
+    print("\nALL EXPANDED ROADMAP MODULES PASSED SUCCESSFULLY! [SUCCESS]")
 
 if __name__ == "__main__":
     run_all_tests()

@@ -35,6 +35,9 @@ When an OEM (e.g., Airbus or Boeing) releases a revision for an aircraft compone
 * **Feature 7: AI Semantic Engineering Rationale & Directives**: Synthesizes engineering justifications, shop-floor technician directives (tooling/relief valve calibration), and FAA 14 CFR Part 43 / EASA Part 145 regulatory statements.
 * **Feature 8: Live Regulatory Feed (FAA & EASA ADs)**: Ingests and cross-references Airworthiness Directives with active fleet components.
 * **Feature 9: Interactive Streamlit Dashboard & Excel Reporting**: Complete multi-tab engineering portal with human-in-the-loop review sign-offs and styled multi-sheet Excel reports (`openpyxl`).
+* **Feature 10: AeroCopilot (Technical Manual RAG Engine)**: Ingests manuals into semantic chunks, vectorizes via TF-IDF / Cosine Similarity, and provides conversational Q&A with grounded document citations, section titles, and similarity confidence scores.
+* **Feature 11: Legacy & Military Scanned Document OCR Pipeline**: Automatically detects rasterized scans, performs PIL image preprocessing (grayscale, contrast boost, sharpening), and extracts vintage military technical orders (e.g. C-130 T.O.s).
+* **Feature 12: Enterprise MRO / Airline ERP Synchronization Hub**: Formats approved changes into ATA SPEC 2000 compliant Engineering Change Orders (ECOs) with cryptographic SHA-256 signatures, dispatching to Swiss-AS AMOS, SAP S/4HANA Aviation, or IBM Maximo REST webhooks.
 
 ---
 

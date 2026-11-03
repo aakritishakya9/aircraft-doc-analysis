@@ -6,6 +6,9 @@ from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 
 def create_aviation_pdf(filename, title, doc_ref, rev_no, pub_date, ata_chapter, component_id, component_name, specs_data, notes_text):
     os.makedirs(os.path.dirname(filename), exist_ok=True)
+    if os.path.exists(filename):
+        print(f"Already exists: {filename}")
+        return
     doc = SimpleDocTemplate(filename, pagesize=letter, rightMargin=40, leftMargin=40, topMargin=40, bottomMargin=40)
     styles = getSampleStyleSheet()
     
@@ -230,6 +233,32 @@ def generate_all():
         "Main Landing Gear Retraction Actuator",
         lg_specs_rev02,
         lg_notes_rev02
+    )
+
+    # Document 3: Legacy Military Scanned Technical Order (C-130H)
+    c130_specs = [
+        ["Pump Assembly Part Number", "P/N 654210-3", "Military Standard MS28889"],
+        ["Rated System Delivery Pressure", "3000 PSI", "Normal Continuous at 3700 RPM"],
+        ["Case Drain Leakage Maximum", "0.5 GPM", "Thermal Fluid Return Limit"],
+        ["Mounting Flange Nut Torque", "115 in-lbs", "Cross Pattern Star Torque"],
+        ["Overhaul Depot Inspection Interval", "800 Flight Hours", "Scheduled Intermediate Check"]
+    ]
+    c130_notes = """
+    TECHNICAL ORDER T.O. 1C-130H-2-29GS (RESTRICTED DISTRIBUTION)
+    SAFETY WARNING: Ensure utility hydraulic reservoir depressurization valve is locked in OPEN position prior to breaking B-nut line connections.
+    Depot level overhaul requires replacement of all fluoroelastomer packing seals.
+    """
+    create_aviation_pdf(
+        os.path.join(sample_dir, "C130_Hydraulics_Vintage_Manual.pdf"),
+        "USAF TECHNICAL ORDER — C-130H HYDRAULIC UTILITY SYSTEM PUMP",
+        "T.O. 1C-130H-2-29GS",
+        "Change 4",
+        "12-AUG-1988",
+        "ATA 29 (Hydraulic Power)",
+        "LEG-HYD-130",
+        "Engine Driven Hydraulic Utility Pump",
+        c130_specs,
+        c130_notes
     )
 
 if __name__ == "__main__":
