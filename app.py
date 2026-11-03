@@ -30,7 +30,7 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Professional Aerospace UI/UX Design System (High-End Dark Theme)
+# Professional Aerospace UI/UX Design System (High-End Dark Theme + Floating AI Assistant)
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
@@ -75,14 +75,14 @@ st.markdown("""
                     linear-gradient(135deg, #0F172A 0%, #162447 60%, #1F4068 100%);
         border: 1px solid rgba(56, 189, 248, 0.3);
         border-radius: 14px;
-        padding: 30px 36px;
-        margin-bottom: 24px;
+        padding: 28px 34px;
+        margin-bottom: 22px;
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
         position: relative;
         overflow: hidden;
     }
     .hero-title {
-        font-size: 32px;
+        font-size: 30px;
         font-weight: 800;
         color: #FFFFFF !important;
         background: linear-gradient(90deg, #FFFFFF 0%, #BAE6FD 50%, #38BDF8 100%);
@@ -93,11 +93,11 @@ st.markdown("""
         line-height: 1.2;
     }
     .hero-desc {
-        font-size: 15px;
+        font-size: 14.5px;
         color: #CBD5E1 !important;
         max-width: 820px;
         line-height: 1.6;
-        margin-bottom: 18px;
+        margin-bottom: 16px;
     }
     .hero-badge-group {
         display: flex;
@@ -186,31 +186,6 @@ st.markdown("""
         gap: 8px;
     }
 
-    /* Docked AI Copilot Drawer */
-    .copilot-docked-container {
-        background: linear-gradient(180deg, #131E3A 0%, #0F172A 100%);
-        border: 1px solid rgba(56, 189, 248, 0.35);
-        border-radius: 14px;
-        padding: 20px 24px;
-        margin-top: 24px;
-        margin-bottom: 24px;
-        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
-    }
-    .copilot-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 14px;
-    }
-    .copilot-title {
-        font-size: 18px;
-        font-weight: 700;
-        color: #FFFFFF;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-    }
-
     /* Badges */
     .badge-critical {
         background-color: rgba(239, 68, 68, 0.2);
@@ -230,6 +205,15 @@ st.markdown("""
         font-size: 11px;
         border: 1px solid rgba(16, 185, 129, 0.4);
     }
+    .badge-med {
+        background-color: rgba(234, 179, 8, 0.2);
+        color: #FACC15;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-weight: 700;
+        font-size: 11px;
+        border: 1px solid rgba(234, 179, 8, 0.4);
+    }
 
     /* Document Frames */
     .doc-page-container {
@@ -239,6 +223,48 @@ st.markdown("""
         background: #0B132B;
         padding: 10px;
         box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+    }
+
+    /* ========================================================
+       FLOATING AI COPILOT BUTTON & POPOVER (BOTTOM-RIGHT)
+       ======================================================== */
+    div[data-testid="stPopover"] {
+        position: fixed !important;
+        bottom: 28px !important;
+        right: 28px !important;
+        z-index: 999999 !important;
+    }
+
+    div[data-testid="stPopover"] > button {
+        background: linear-gradient(135deg, #0284C7 0%, #0369A1 100%) !important;
+        color: #FFFFFF !important;
+        border: 2px solid #38BDF8 !important;
+        border-radius: 50px !important;
+        padding: 12px 24px !important;
+        font-size: 15px !important;
+        font-weight: 700 !important;
+        letter-spacing: 0.3px !important;
+        box-shadow: 0 8px 30px rgba(2, 132, 199, 0.6), 0 0 15px rgba(56, 189, 248, 0.4) !important;
+        cursor: pointer !important;
+        transition: all 0.25s ease !important;
+    }
+
+    div[data-testid="stPopover"] > button:hover {
+        transform: translateY(-4px) scale(1.04) !important;
+        box-shadow: 0 12px 35px rgba(2, 132, 199, 0.8), 0 0 25px rgba(56, 189, 248, 0.6) !important;
+        border-color: #7DD3FC !important;
+    }
+
+    div[data-testid="stPopoverBody"] {
+        width: 480px !important;
+        max-width: 90vw !important;
+        max-height: 82vh !important;
+        background: #162238 !important;
+        border: 1px solid rgba(56, 189, 248, 0.4) !important;
+        border-radius: 16px !important;
+        padding: 20px !important;
+        box-shadow: 0 24px 60px rgba(0, 0, 0, 0.8), 0 0 30px rgba(56, 189, 248, 0.2) !important;
+        overflow-y: auto !important;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -347,7 +373,7 @@ st.markdown("""
     <div class="hero-badge-group">
         <span class="hero-pill">⚡ 95% Review Cycle Time Reduction</span>
         <span class="hero-pill">🛡️ FAA 14 CFR Part 43 / EASA 145 Compliant</span>
-        <span class="hero-pill">🤖 Built-in AeroCopilot RAG Engine</span>
+        <span class="hero-pill">🤖 Floating AeroCopilot RAG Assistant</span>
         <span class="hero-pill">🔌 Enterprise MRO Sync (AMOS / SAP / Maximo)</span>
         <span class="hero-pill">📷 Scanned Legacy OCR Pipeline</span>
     </div>
@@ -827,57 +853,56 @@ with tab_export:
     st.dataframe(changes_df, use_container_width=True, hide_index=True)
 
 # =============================================================
-# INTEGRATED DOCKED AI COPILOT ASSISTANT (ALWAYS ACCESSIBLE)
+# FLOATING AI ASSISTANT (ANCHORED IN BOTTOM-RIGHT CORNER)
 # =============================================================
-st.markdown("""
-<div class="copilot-docked-container">
-    <div class="copilot-header">
-        <div class="copilot-title">
-            <span style="font-size:24px;">🤖</span> AeroCopilot: Integrated Technical Manual Assistant
-        </div>
-        <span class="hero-pill">RAG Grounded Intelligence</span>
+with st.popover("🤖 AeroCopilot AI", help="Click to open Floating AI Assistant"):
+    st.markdown("""
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+        <span style="font-size:17px; font-weight:800; color:#FFFFFF;">🤖 AeroCopilot Assistant</span>
+        <span class="badge-success">● RAG Grounded</span>
     </div>
-    <p style="color:#94A3B8; font-size:13px; margin-top:-6px; margin-bottom:14px;">
-        Instant conversational Q&A over the active technical publication. Ask any engineering specification, tooling checkout, or effectivity question.
+    <p style="color:#94A3B8; font-size:12.5px; margin-top:-4px; margin-bottom:12px;">
+        Instant conversational intelligence over the active technical publication. Ask any engineering specification, tooling, or effectivity question.
     </p>
-""", unsafe_allow_html=True)
+    """, unsafe_allow_html=True)
+    
+    # Quick Prompt Chips
+    st.markdown("<p style='font-size:11px; font-weight:700; color:#38BDF8; text-transform:uppercase; margin-bottom:6px;'>Quick Inquiry Chips</p>", unsafe_allow_html=True)
+    c1, c2 = st.columns(2)
+    q_chip = None
+    if c1.button("Rated Pressure?", key="pop_p", use_container_width=True):
+        q_chip = "What is the rated operating delivery pressure?"
+    if c2.button("Drive Flange Torque?", key="pop_t", use_container_width=True):
+        q_chip = "What is the drive flange bolt torque specification?"
+        
+    c3, c4 = st.columns(2)
+    if c3.button("GSE Ground Tooling?", key="pop_g", use_container_width=True):
+        q_chip = "What ground support equipment is required for system checkout?"
+    if c4.button("Affected MSNs?", key="pop_m", use_container_width=True):
+        q_chip = "Which aircraft MSNs are affected by this technical publication?"
 
-# Quick Prompt Chips
-chip_col1, chip_col2, chip_col3, chip_col4 = st.columns(4)
-q_chip = None
-if chip_col1.button("Rated Delivery Pressure?", use_container_width=True):
-    q_chip = "What is the rated operating delivery pressure?"
-if chip_col2.button("Drive Flange Torque?", use_container_width=True):
-    q_chip = "What is the drive flange bolt torque specification?"
-if chip_col3.button("GSE Ground Tooling?", use_container_width=True):
-    q_chip = "What ground support equipment is required for system checkout?"
-if chip_col4.button("Affected Aircraft MSNs?", use_container_width=True):
-    q_chip = "Which aircraft MSNs are affected by this technical publication?"
+    user_query = st.text_input("Ask a question about this manual:", value=q_chip or "", placeholder="e.g. What is the case drain temperature limit?", key="copilot_pop_input")
 
-user_query = st.text_input("Ask AeroCopilot any question about this manual:", value=q_chip or "", placeholder="e.g. What is the case drain temperature limit or inspection interval?")
+    if user_query:
+        with st.spinner("Analyzing manual vectors..."):
+            rag_res = st.session_state["rag_engine"].query(user_query)
+            conf = rag_res["confidence"]
+            conf_badge = f"<span class='badge-success'>{int(conf*100)}% Match</span>" if conf > 0.6 else f"<span class='badge-med'>{int(conf*100)}% Match</span>"
 
-if user_query:
-    with st.spinner("Analyzing manual vectors..."):
-        rag_res = st.session_state["rag_engine"].query(user_query)
-        conf = rag_res["confidence"]
-        conf_badge = f"<span class='badge-success'>{int(conf*100)}% Confidence Match</span>" if conf > 0.6 else f"<span class='badge-med'>{int(conf*100)}% Match</span>"
-
-        st.markdown(f"""
-        <div style="background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(56, 189, 248, 0.3); border-radius: 8px; padding: 14px 18px; margin-top: 10px;">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 6px;">
-                <span style="font-weight:700; color:#38BDF8; font-size:14px;">Copilot Answer:</span>
-                {conf_badge}
+            st.markdown(f"""
+            <div style="background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(56, 189, 248, 0.3); border-radius: 10px; padding: 12px 16px; margin-top: 10px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 6px;">
+                    <span style="font-weight:700; color:#38BDF8; font-size:13px;">Copilot Answer:</span>
+                    {conf_badge}
+                </div>
+                <div style="font-size:13.5px; color:#F8FAFC; line-height:1.5;">
+                    {rag_res['answer']}
+                </div>
             </div>
-            <div style="font-size:14px; color:#F8FAFC; line-height:1.5;">
-                {rag_res['answer']}
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
+            """, unsafe_allow_html=True)
 
-        if rag_res["citations"]:
-            with st.expander("📌 View Grounded Source Citations & Document Chunks"):
-                for c_idx, chunk in enumerate(rag_res["citations"], start=1):
-                    st.markdown(f"**Citation #{c_idx}:** `{chunk['source_doc']} ({chunk['revision']})` — *{chunk['title']}* (Similarity Score: `{chunk.get('similarity_score', 0)}`)")
-                    st.markdown(f"> {chunk['content']}")
-
-st.markdown("</div>", unsafe_allow_html=True)
+            if rag_res["citations"]:
+                with st.expander("📌 Source Citations & Grounded Chunks"):
+                    for c_idx, chunk in enumerate(rag_res["citations"], start=1):
+                        st.markdown(f"**Citation #{c_idx}:** `{chunk['source_doc']} ({chunk['revision']})` — *{chunk['title']}*")
+                        st.markdown(f"> {chunk['content']}")
